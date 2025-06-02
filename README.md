@@ -65,7 +65,7 @@ I have used the following technologies to build this solution:
 
 ### 🛠 What I Would Have Done Differently with More Time
 
-- **Database: The application currently uses a file-based SQLite database seeded from a CSV on each startup. With more time, I would migrate to a production-grade database system to support persistent storage, scalability, and incremental updates.
+- **Database**: The application currently uses a file-based SQLite database seeded from a CSV on each startup. With more time, I would migrate to a production-grade database system to support persistent storage, scalability, and incremental updates.
 - **Add a Maximum Distance Filter:** The API returns the 5 closest food facilities without restricting by an absolute distance or radius. I would add a `maxRadiusDistance` parameter to avoid returning results that are too far away.
 - **Implement Logging and Metrics:** I would integrate logging and monitoring tools to improve observability and aid troubleshooting in production environments.
 - **Add Pagination:** To handle larger datasets efficiently, I would add pagination to API responses for better performance and usability.
