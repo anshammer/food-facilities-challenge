@@ -135,7 +135,10 @@ docker run -d -p 8080:8080 --name foodfacilities-api foodfacilities-api
 ```
 Access the API at http://localhost:8080/swagger
 
+Run the UI:
 
+Launch the index.html file in a web browser or run on a live server to access the UI for testing the API endpoints.
+Since the API has CORS enabled, you can run the UI on any port without issues.
 
 
 ## Next Steps
