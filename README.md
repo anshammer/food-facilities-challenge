@@ -1,56 +1,122 @@
-# Food Facilities Challenge
+# Food Facilities Search API
 
-Use this data set about Mobile Food Facilities in San Francisco (https://data.sfgov.org/Economy-and-Community/Mobile-Food-Facility-Permit/rqzj-sfat/data) to build an application. Please clarify with your recruiter first if you will be doing the Backend Focused or Frontend Focused version of the project, and what language you will be doing the challenge in. Make sure this is clear before you start this challenge.
+## Description
 
-**Backend Focused Version**
+This project is a backend API for searching permitted food facilities in San Francisco. It provides endpoints to query food vendors based on:
 
-Your Application should have the following features:
-- Search by name of applicant. Include optional filter on "Status" field.
-- Search by street name. The user should be able to type just part of the address. Example: Searching for "SAN" should return food trucks on "SANSOME ST"
-- Given a latitude and longitude, the API should return the 5 nearest food trucks. By default, this should only return food trucks with status "APPROVED", but the user should be able to override this and search for all statuses.
-  - You can use any external services to help with this (e.g. Google Maps API).
-- We write automated tests and we would like you to do so as well.
+- ✅ **Applicant name** – Supports partial and full name matching  
+- ✅ **Street name** – Matches vendors based on a substring of the street address  
+- ✅ **Geographic proximity** – Returns the 5 nearest vendors to a given latitude and longitude  
 
-*Bonus Points:*
-- Use an API documentation tool
-- Provide a dockerfile with everything necessary to run your application (for backend focused candidates)
-- Build a UI
+The API is built using **ASP.NET Core Web API** and uses **Entity Framework Core** to load and query data from the official food facility CSV. It supports **Docker** for containerized deployment and includes automated **xUnit** test coverage.
 
-**Frontend Focused Version**
+### Problem & Solution
 
-Your application should have the following features:
-- Search by name of applicant. Include optional filter on "Status" field.
-- Search by street name. The user should be able to type just part of the address. Example: Searching for "SAN" should return food trucks on "SANSOME ST"
-- Build a UI using a frontend framework like React. You have creative freedom to design the UI however you would like.
+The challenge was to expose a simple and flexible interface over a dataset of permitted food facilities, enabling real-world search use cases for end users. This solution reads data from a CSV file and offers a REST API to query based on name, address, or proximity—common queries that city residents or visitors might perform.
 
-*Bonus points:*
-- Write automated tests
-- Use an API documentation tool
-- Build the other features listed in the Backend Focused Version
+### Key Features
 
-## README
+- Full-text search by **applicant** or **street name**  
+- Location-based search using **latitude/longitude**, returning the **5 closest vendors**  
+- **Dockerized** for easy local setup and deployment  
+- **xUnit Automated Test Coverage** using an **in-memory database** for fast and reliable tests  
 
-Your code should include a README file including the following items:
+---
 
-- Description of the problem and solution;
-- Reasoning behind your technical/architectural decisions
-- Critique section:
-  - What would you have done differently if you had spent more time on this?
-  - What are the trade-offs you might have made?
-  - What are the things you left out?
-  - What are the problems with your implementation and how would you solve them if we had to scale the application to a large number of users?
-- Please document any steps necessary to run your solution and your tests.
+## Technical and Architectural Decisions
 
-## How we review
+- **ASP.NET Core Web API:** For modern, high-performance REST service with good ecosystem and tooling.
+- **Entity Framework Core:** Simplifies data access with LINQ and supports test-friendly in-memory DB.
+- **Docker:** Ensures consistent behavior across environments and simplifies deployment. Tests are executed during the Docker build to verify the integrity of the codebase.
+- **xUnit:** Well-supported testing framework that integrates seamlessly with .NET.
+- **In-memory DB for tests:** Enables fast, isolated unit and integration tests without external dependencies.
+- **SQLite:** Lightweight database for storing food facility data.
+- **Swagger:** API documentation tool for generating interactive API documentation.
+- **CsvHelper:** Library for reading CSV files.
+- **ENUM:** Used to define the possible values for the `status` field to ensure type safety and clarity in the codebase. Possibly, the UI could also handle sending the correct value in a production environment.
+- **MaxResults:** Added a `maxResults` parameter to limit the number of results returned by the API. This would be a configuration option in a production environment to avoid overwhelming clients with too many results.
 
-We value quality over feature-completeness. It is fine to leave things aside provided you call them out in your project's README.
-The aspects of your code we will assess include:
+---
 
-- Clarity: does the README clearly and concisely explains the problem and solution? Are technical tradeoffs explained?
-- Correctness: does the application do what was asked? If there is anything missing, does the README explain why it is missing?
-- Code quality: is the code simple, easy to understand, and maintainable? Are there any code smells or other red flags? Does object-oriented code follows principles such as the single responsibility principle? Is the coding style consistent with the language's guidelines? Is it consistent throughout the codebase?
-- Security: are there any obvious vulnerabilities?
-- Technical choices: do choices of libraries, databases, architecture etc. seem appropriate for the chosen application?
+## Critique Section
 
-## What to send back to our team
-Please send an email back to your point of contact with a compressed (zip) file of your Github project repo when done.
+### 🛠 What I Would Have Done Differently with More Time
+
+- **Persistent Database Seeding:** Currently, the SQLite database is seeded in-memory from the CSV data each time the application starts. With more time, I would implement persistent database storage to avoid reseeding on every run, improving startup performance and enabling incremental updates to the data.
+- **Add a Maximum Distance Filter:** The API returns the 5 closest food facilities without restricting by an absolute distance or radius. I would add a `maxRadiusDistance` parameter to avoid returning results that are too far away.
+- **Implement Logging and Metrics:** I would integrate logging and monitoring tools to improve observability and aid troubleshooting in production environments.
+- **Add Pagination:** To handle larger datasets efficiently, I would add pagination to API responses for better performance and usability.
+- **Improve Input Validation:** Stricter input validation would ensure that all incoming parameters are valid, reducing potential errors and improving robustness.
+- **External API for Food Facilities:** Used the external SFO GOV API for food facilities instead of the CSV file to fetch live data.
+- **Enhance Location-Based Searches:** By incorporating geospatial indexing or external mapping services, location queries could become more accurate and performant.
+
+### Trade-offs Made
+
+- **In-Memory Seeding vs Persistent Storage:** I seed SQLite with CSV data each time the app starts to keep deployment simple. However, this approach can be less efficient for larger datasets or frequent data changes compared to a persistent, continuously updated database.
+- **Synchronous Calls:** Used synchronous calls in some controller methods for simplicity rather than fully async.
+- **In-Memory Database in Tests:** Opted for in-memory database in tests instead of integration tests with a real database.
+- **No Caching:** No caching implemented due to the small dataset.
+
+### Things Left Out
+
+- **User Authentication:** No user authentication or authorization mechanisms.
+- **API Versioning:** Not implemented due to the limited scope of this project. 
+- **API Rate Limiting:** No API rate limiting to protect against excessive requests.
+- **Frontend UI or Client Application:** No frontend UI or client application provided.
+- **Comprehensive Input Validation Middleware:** Input validation could be more robust.
+- **External API for Geolocation:** No external API used for geolocation-based searches.
+
+---
+
+## Problems and Scaling Considerations
+
+- Without indexing, linear database queries will slow down as data grows.
+- Lack of caching means every query hits the database, increasing response times under load.
+- Absence of pagination may cause large payloads and slow client performance.
+- Loading and seeding data at startup increases memory usage as the dataset grows.
+- Limited error handling and retry logic could reduce reliability during failures.
+- Location searches without spatial indexes are inefficient.
+- No authentication or rate limiting exposes the API to misuse and denial-of-service risks.
+
+---
+
+## How Would I Scale This to Many Users?
+
+- **Use a Persistent Database:** Move from startup seeding to a continuously updated persistent database for better data management.
+- **Implement Spatial Indexing:** Use spatially-enabled databases (e.g., PostGIS, SQL Server geography types) for efficient location queries.
+- **Optimize Queries:** Add indexes on searchable fields such as applicant name, status, and location.
+- **Add Caching:** Use caching layers like Redis to reduce database load for frequent queries.
+- **Enable Pagination:** Limit response sizes to improve client and server performance.
+- **Support Asynchronous Processing:** Use async methods to improve throughput under high concurrency.
+- **Introduce Rate Limiting:** Protect the API from excessive requests and potential attacks.
+- **Horizontal Scaling:** Deploy multiple instances behind load balancers to distribute traffic.
+
+---
+
+## Steps to Run the Solution and Tests
+
+### Prerequisites
+
+- .NET 8 SDK installed  
+- Docker installed (optional for containerized runs)
+
+### Run Locally
+
+```bash
+dotnet build
+dotnet run --project Foodfacilities
+
+## Running with Docker
+
+Build the Docker image:
+
+```bash
+docker build -t foodfacilities-api .
+```
+
+Run the Docker container:
+
+```bash
+docker run -d -p 8080:8080 --name foodfacilities-api foodfacilities-api
+```
+Access the API at http://localhost:8080/swagger
