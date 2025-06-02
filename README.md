@@ -38,7 +38,7 @@ I have used the following technologies to build this solution:
 
 ---
 ## Architecture
-![alt text](image.png)
+<img width="729" alt="Architecture" src="https://github.com/user-attachments/assets/46606a20-a4cf-4e62-b408-e007262d1076" />
 
 ---
 
