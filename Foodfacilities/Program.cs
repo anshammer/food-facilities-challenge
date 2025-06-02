@@ -1,5 +1,7 @@
 using Foodfacilities.Data;
+using Foodfacilities.Interfaces;
 using Foodfacilities.SeedData;
+using Foodfacilities.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IFoodFacilityService, FoodFacilityService>();
+
 
 builder.Services.AddCors(options =>
 {
