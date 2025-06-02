@@ -56,8 +56,8 @@ I have used the following technologies to build this solution:
 - **CsvHelper:** Library for reading CSV files.
 - **Asynchronous Programming:** Used async methods for db queries to improve performance and scalability.
 - **ENUM:** Used to define the possible values for the `status` field to ensure type safety and clarity in the codebase. Possibly, the UI could also handle sending the correct value in a production environment.
-- **MaxResults:** Added a `maxResults` parameter to limit the number of results returned by the API. This would be a configuration option in a production environment to avoid overwhelming clients with too many results.
-- **UI Search Character Mininum Length:** Added requirement on the UI for a minimum of 3 characters to prevent excessive queries and improve performance.
+- **MaxResults:** Added a `maxResults` parameter to limit the number of results returned by the API while I dont have pagination implemented. This would be a configuration option in a production environment to avoid overwhelming clients with too many results.
+- **UI Search Character Mininum Length:** Added requirement on the UI (in Searching by Street Name), for a minimum of 3 characters to prevent excessive queries and improve performance. This is another option I have added to limit the search criteria and avoid unnecessary load on the API.
 
 ---
 
@@ -124,7 +124,6 @@ I have used the following technologies to build this solution:
 
 ### Run Locally
 
-```bash
 
 ## Running with Docker
 
@@ -144,8 +143,7 @@ Access the API at http://localhost:8080/swagger
 Run the UI:
 
 Launch the index.html file in a web browser or run on a live server to access the UI for testing the API endpoints.
-Since the API has CORS enabled, you can run the UI on any port without issues.
-
+*Since the API has CORS enabled for all domains, you can run the UI on any port without issues.*
 
 ## Next Steps
 
