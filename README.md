@@ -19,9 +19,21 @@ The challenge was to expose a simple and flexible interface over a dataset of pe
 - Search foodfacilities by **applicant** or **street name**  
 - Location-based search using **latitude/longitude**, returning the **5 closest vendors**  
 - **Dockerized** for easy local setup and deployment  
-- **xUnit Automated Test Coverage** using an **in-memory database** for fast and reliable tests  
-- **Swagger API Documentation**
+- **xUnit Automated Test Coverage** being run as as part of the docker build process, using mock data for fast and reliable tests. 
+- **Swagger API Documentation** available for testing the API endpoints
 - **UI**: A simple UI to test the API endpoints and view the results
+
+---
+
+## Tech Stack
+I have used the following technologies to build this solution:
+- **ASP.NET Core Web API**: For building the RESTful API.
+- **Entity Framework Core**: For data access and querying the database.
+- **SQLite**: As the lightweight database for storing food facility data.
+- **CsvHelper**: For reading and parsing the CSV file containing food facility data.
+- **xUnit**: For unit testing the API endpoints and business logic.
+- **Swagger**: For API documentation and testing.
+- **Docker**: For containerization and easy deployment.
 
 ---
 
@@ -29,7 +41,7 @@ The challenge was to expose a simple and flexible interface over a dataset of pe
 
 - **ASP.NET Core Web API:** For modern, high-performance REST service with good ecosystem and tooling.
 - **CORS:** I have Enabled to allow cross-origin requests from all origins since UI will be hosted on a different port, which is useful for development and testing purposes. In a production environment, this should be restricted to specific domains.
-- **Entity Framework Core:** Simplifies data access with LINQ and supports test-friendly in-memory DB.
+- **Entity Framework Core:** Simplifies data access with LINQ and supports test-friendly in-memory and file-based DB.
 - **Docker:** Ensures consistent behavior across environments and simplifies deployment. Tests are executed during the Docker build to verify the integrity of the codebase.
 - **xUnit:** Well-supported testing framework that integrates seamlessly with .NET.
 - **In-memory DB for tests:** Enables fast, isolated unit and integration tests without external dependencies.
@@ -47,7 +59,7 @@ The challenge was to expose a simple and flexible interface over a dataset of pe
 
 ### 🛠 What I Would Have Done Differently with More Time
 
-- **Persistent Database Seeding:** Currently, the SQLite database is seeded in-memory from the CSV data each time the application starts. With more time, I would implement persistent database storage to avoid reseeding on every run, improving startup performance and enabling incremental updates to the data.
+- **Database: The application currently uses a file-based SQLite database seeded from a CSV on each startup. With more time, I would migrate to a production-grade database system to support persistent storage, scalability, and incremental updates.
 - **Add a Maximum Distance Filter:** The API returns the 5 closest food facilities without restricting by an absolute distance or radius. I would add a `maxRadiusDistance` parameter to avoid returning results that are too far away.
 - **Implement Logging and Metrics:** I would integrate logging and monitoring tools to improve observability and aid troubleshooting in production environments.
 - **Add Pagination:** To handle larger datasets efficiently, I would add pagination to API responses for better performance and usability.
@@ -59,7 +71,6 @@ The challenge was to expose a simple and flexible interface over a dataset of pe
 
 - **In-Memory Seeding vs Persistent Storage:** I seed SQLite with CSV data each time the app starts to keep deployment simple. However, this approach can be less efficient for larger datasets or frequent data changes compared to a persistent, continuously updated database.
 - **EF Core Function Likes:** Used `EF.Functions.Like` instead of `.Contains` for reliable, always server-side querying, however , `LIKE` queries are not indexed and slow and may not be as performant as using full-text search capabilities in larger datasets.
-- **In-Memory Database in Tests:** Opted for in-memory database in tests instead of integration tests with a real database.
 - **No Caching:** No caching implemented due to the small dataset.
 - **API Endpoints:** For clarity of this assignment, I have kept multiple endpoints for different search criteria. In a production environment, I would consider consolidating these into a single endpoint with query parameters to reduce complexity and improve maintainability.
 
@@ -123,3 +134,11 @@ Run the Docker container:
 docker run -d -p 8080:8080 --name foodfacilities-api foodfacilities-api
 ```
 Access the API at http://localhost:8080/swagger
+
+
+
+
+## Next Steps
+
+- The assignment has been completed in C# .NET 
+- I have begun exploring a Python version of the project, and with additional time, I would refactor and implement the same functionality in Python.
