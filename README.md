@@ -10,6 +10,7 @@ This project is a backend API for searching permitted food facilities in San Fra
 
 The API is built using **ASP.NET Core Web API** and uses **Entity Framework Core** to load and query data from the official food facility CSV. It supports **Docker** for containerized deployment and includes automated **xUnit** test coverage.
 
+
 ### Problem & Solution
 
 The challenge was to expose a simple and flexible interface over a dataset of permitted food facilities, enabling real-world search use cases for end users. This solution reads data from a CSV file and offers a REST API to query based on name, address, or proximity—common queries that city residents or visitors might perform.
@@ -36,10 +37,15 @@ I have used the following technologies to build this solution:
 - **Docker**: For containerization and easy deployment.
 
 ---
+## Architecture
+![alt text](image.png)
+
+---
 
 ## Technical and Architectural Decisions
 
 - **ASP.NET Core Web API:** For modern, high-performance REST service with good ecosystem and tooling.
+- **Service Layer**: Implemented a service layer to handles the business logic and data access, promoting separation of concerns.
 - **CORS:** I have Enabled to allow cross-origin requests from all origins since UI will be hosted on a different port, which is useful for development and testing purposes. In a production environment, this should be restricted to specific domains.
 - **Entity Framework Core:** Simplifies data access with LINQ and supports test-friendly in-memory and file-based DB.
 - **Docker:** Ensures consistent behavior across environments and simplifies deployment. Tests are executed during the Docker build to verify the integrity of the codebase.
