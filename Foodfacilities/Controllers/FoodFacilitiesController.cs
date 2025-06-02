@@ -31,7 +31,7 @@ namespace Foodfacilities.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetFoodFacilitiesByName([Required][FromQuery] string applicantName, [EnumDataType(typeof(FoodFacilitiesStatus))] string? status)
+        public async Task<IActionResult> GetFoodFacilitiesByName([Required][FromQuery] string applicantName, [EnumDataType(typeof(FoodFacilitiesStatus))] string? status)
         {
 
             IQueryable<FoodFacility> query = _dbContext.FoodFacilities;
@@ -44,7 +44,7 @@ namespace Foodfacilities.Controllers
             {
                 if (Enum.TryParse<FoodFacilitiesStatus>(status, true, out var facilityStatus))
                 {
-                    query = query.Where(f => EF.Functions.Like(f.Status, $"%{status}"));
+                    query = query.Where(f => f.Status.Equals(facilityStatus.ToString()));
                 }
                 else
                 {
@@ -52,11 +52,15 @@ namespace Foodfacilities.Controllers
                 }
             }
 
-            var result = query.ToListAsync().Result;
+            var result = await query.ToListAsync();
 
             if (result.Count == 0)
             {
                 return NotFound($"No food facilities found for the applicant name: {applicantName}");
+            }
+            else if (result.Count > MaxResults)
+            {
+                return BadRequest("Too many results found. Please refine your search.");
             }
             return Ok(result);
         }
@@ -73,7 +77,7 @@ namespace Foodfacilities.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetFoodFacilitiesByStreet([Required][FromQuery] string streetName)
+        public async Task<IActionResult> GetFoodFacilitiesByStreet([Required][FromQuery] string streetName)
         {
             if (string.IsNullOrWhiteSpace(streetName))
             {
@@ -84,7 +88,7 @@ namespace Foodfacilities.Controllers
             // Perform partial string match on address
             query = query.Where(f => EF.Functions.Like(f.Address, $"%{streetName}%"));
 
-            var result = query.ToListAsync().Result;
+            var result = await query.ToListAsync();
 
             if (result.Count == 0)
             {
@@ -108,7 +112,7 @@ namespace Foodfacilities.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Produces("application/json")]
-        public IActionResult GetFoodFacilitiesByGeoLocation([Required][FromQuery] double latitude, [Required][FromQuery] double longitude, string? status)
+        public async Task<IActionResult> GetFoodFacilitiesByGeoLocation([Required][FromQuery] double latitude, [Required][FromQuery] double longitude, string? status)
         {
             // Validate status value (if provided)
             if (status != null && !Enum.TryParse<FoodFacilitiesStatus>(status, true, out _))
@@ -117,23 +121,26 @@ namespace Foodfacilities.Controllers
             }
 
             IQueryable<FoodFacility> query = _dbContext.FoodFacilities;
-            query = query.Where(f => f.Latitude != null && f.Longitude != null);
+            query = query.Where(f =>
+                f.Latitude != null && f.Longitude != null &&
+                !(f.Latitude == 0 && f.Longitude == 0)
+            );
 
             // Filter by status if provided, otherwise default to APPROVED
-            if (status != null)
+            if (status != null && Enum.TryParse<FoodFacilitiesStatus>(status, true, out var facilityStatus))
             {
-                query = query.Where(f => EF.Functions.Like(f.Status, $"%{status}"));
+                query = query.Where(f => EF.Functions.Like(f.Status, facilityStatus.ToString()));
             }
             else
             {
                 query = query.Where(f => EF.Functions.Like(f.Status, $"%{FoodFacilitiesStatus.APPROVED}"));
             }
 
-            query = query.OrderBy(f => Math.Pow(f.Latitude.Value - latitude, 2)
-                                     + Math.Pow(f.Longitude.Value - longitude, 2))
-                         .Take(5);
+            query = query.OrderBy(f => (f.Latitude.Value - latitude) * (f.Latitude.Value - latitude) +
+                                       (f.Longitude.Value - longitude) * (f.Longitude.Value - longitude))
+                                       .Take(5);
 
-            var result = query.ToListAsync().Result;
+            var result = await query.ToListAsync();
 
             if (result.Count == 0)
             {

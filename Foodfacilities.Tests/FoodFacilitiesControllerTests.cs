@@ -3,11 +3,6 @@ using Foodfacilities.Models;
 using Foodfacilities.SeedData;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Foodfacilities.Tests
 {
@@ -39,11 +34,11 @@ namespace Foodfacilities.Tests
         }
 
         [Fact]
-        public void GetFoodFacilitiesByName_ShouldReturnMatchingFacilities()
+        public async Task GetFoodFacilitiesByName_ShouldReturnMatchingFacilities()
         {
             var controller = new FoodFacilitiesController(GetInMemoryDbContext());
 
-            var result = controller.GetFoodFacilitiesByName("Taco", "APPROVED");
+            var result = await controller.GetFoodFacilitiesByName("Taco", "APPROVED");
 
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
@@ -55,44 +50,44 @@ namespace Foodfacilities.Tests
         }
 
         [Fact]
-        public void GetFoodFacilitiesByName_ShouldReturnNoMatchingFacilities()
+        public async Task GetFoodFacilitiesByName_ShouldReturnNoMatchingFacilities()
         {
             var dbContext = GetInMemoryDbContext();
             var controller = new FoodFacilitiesController(dbContext);
 
-            var result = controller.GetFoodFacilitiesByName("NONEXISTENT", null);
+            var result = await controller.GetFoodFacilitiesByName("NONEXISTENT", null);
             var notfoUdResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("No food facilities found for the applicant name: NONEXISTENT", notfoUdResult.Value);
         }
 
         [Fact]
-        public void GetFoodFacilitiesByName_ShouldReturnNoMatchingFacilitiesForStatus()
+        public async Task GetFoodFacilitiesByName_ShouldReturnNoMatchingFacilitiesForStatus()
         {
             var dbContext = GetInMemoryDbContext();
             var controller = new FoodFacilitiesController(dbContext);
 
-            var result = controller.GetFoodFacilitiesByName("Jim's", "APPROVED");
+            var result = await controller.GetFoodFacilitiesByName("Jim's", "APPROVED");
             var notfoUdResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("No food facilities found for the applicant name: Jim's", notfoUdResult.Value);
         }
 
         [Fact]
-        public void GetFoodFacilitiesByName_WithInvalidStatus_ReturnsBadRequest()
+        public async Task GetFoodFacilitiesByName_WithInvalidStatus_ReturnsBadRequest()
         {
             var dbContext = GetInMemoryDbContext();
             var controller = new FoodFacilitiesController(dbContext);
-
-            var result = controller.GetFoodFacilitiesByName("Joe", "REJECTED");
+            
+            var result = await controller.GetFoodFacilitiesByName("Joe", "REJECTED");
 
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
             Assert.Equal("Invalid status value. Allowed values are: APPROVED, REQUESTED, EXPIRED.", badRequestResult.Value);
         }
 
         [Fact]
-        public void GetFoodFacilitiesByLocation_ShouldReturnMatchingFacilities()
+        public async Task GetFoodFacilitiesByLocation_ShouldReturnMatchingFacilities()
         {
             var controller = new FoodFacilitiesController(GetInMemoryDbContext());
-            var result = controller.GetFoodFacilitiesByGeoLocation(37.7750, -122.4194, null);
+            var result = await controller.GetFoodFacilitiesByGeoLocation(37.7750, -122.4194, null);
 
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
@@ -104,10 +99,10 @@ namespace Foodfacilities.Tests
 
 
         [Fact]
-        public void GetFoodFacilitiesByLocation_ShouldReturnMatchingFacilitiesWithStatus()
+        public async Task GetFoodFacilitiesByLocation_ShouldReturnMatchingFacilitiesWithStatus()
         {
             var controller = new FoodFacilitiesController(GetInMemoryDbContext());
-            var result = controller.GetFoodFacilitiesByGeoLocation(37.7750, -122.4194, "REQUESTED");
+            var result = await controller.GetFoodFacilitiesByGeoLocation(37.7750, -122.4194, "REQUESTED");
 
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
@@ -119,10 +114,10 @@ namespace Foodfacilities.Tests
         }
 
         [Fact]
-        public void GetFoodFacilitiesByStreetName_ShouldReturnMatchingFacilities()
+        public async Task GetFoodFacilitiesByStreetName_ShouldReturnMatchingFacilities()
         {
             var controller = new FoodFacilitiesController(GetInMemoryDbContext());
-            var result = controller.GetFoodFacilitiesByStreet("California");
+            var result = await controller.GetFoodFacilitiesByStreet("California");
 
             Assert.NotNull(result);
             Assert.IsType<OkObjectResult>(result);
@@ -134,11 +129,11 @@ namespace Foodfacilities.Tests
         }
 
         [Fact]
-        public void GetFoodFacilitiesByStreetName_ShouldReturnNoMatchingFacilities()
+        public async Task GetFoodFacilitiesByStreetName_ShouldReturnNoMatchingFacilities()
         {
             var controller = new FoodFacilitiesController(GetInMemoryDbContext());
             var streetName = "NonExistentStreet";
-            var result = controller.GetFoodFacilitiesByStreet(streetName);
+            var result = await controller.GetFoodFacilitiesByStreet(streetName);
 
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal($"No food facilities found on the street name starting with: {streetName}", notFoundResult.Value);
