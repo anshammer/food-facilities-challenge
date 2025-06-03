@@ -1,0 +1,17 @@
+# Build artifacts
+bin/
+obj/
+.vs/
+TestResults/
+
+# User-specific files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# Ignore SQLite database files
+*.db
+*.db-shm
+*.db-wal

@@ -1,0 +1,6 @@
+@Foodfacilities_HostAddress = http://localhost:5257
+
+GET {{Foodfacilities_HostAddress}}/foodfacilities/
+Accept: application/json
+
+###
